@@ -1,0 +1,29 @@
+[project]
+name = "cluepoint-challenge"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.12"
+
+dependencies = [
+    "docling>=2.102.1",
+]
+
+[dependency-groups]
+dev = [
+    "ruff>=0.15.17",
+]
+
+
+
+[tool.ruff]
+line-length = 88
+target-version = "py312"
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "B", "UP", "SIM", "C4"]  # errors, pyflakes, isort, bugbear, pyupgrade, simplify, comprehensions
+ignore = ["E501"]  # let the formatter handle line length
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-ra --strict-markers"
