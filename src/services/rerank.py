@@ -5,16 +5,14 @@ from core.llm import generate_structured
 from core.text import truncate_tokens
 from models.schemas import Relevance
 
-_RERANK_PROMPT = """You are ranking sections of a clinical trial protocol by how useful each one is for extracting a specific piece of information.
+_RERANK_PROMPT = """You are ranking a section of a clinical trial protocol by how relevant to a query.
 
-INFORMATION NEED:
+QUERY:
 {query}
 
-Rate how relevant the section below is for extracting the information need above, using an integer score from 0 to 10:
-- 0 = the section is unrelated and contains none of the information needed.
-- 10 = the section directly contains the information to be extracted.
-
-Judge only whether this section helps extract the information need. Do not reward generic topical overlap.
+Rate how relevant the text below, using an integer score from 0 to 10:
+- 0 = the section is unrelated.
+- 10 = the section directly contains the information.
 
 Return ONLY valid JSON in the following format:
 {{"relevance": <integer 0-10>}}

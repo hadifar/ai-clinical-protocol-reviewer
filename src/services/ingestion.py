@@ -9,29 +9,22 @@ from pathlib import Path
 from core.config import settings
 from core.embeddings import embed_dense, embed_sparse
 from core.llm import generate_structured
-from core.text import truncate_tokens
-from core.vectorstore import (
-    DENSE,
-    SPARSE,
-    ensure_collection,
-    get_client,
-    source_indexed,
-)
+from core.text import extract_titles, truncate_tokens
+from core.vectorstore import ensure_collection, get_client, source_indexed
 from models.schemas import Query
 
-_QUERY_PROMPT = """You are tasked with generating a search query for a given section of a clinical trial protocol document.
-The query must be a single concise sentence that reflects the main idea of the section (usually denoted by ##).
-T
+_QUERY_PROMPT = """You are tasked with generating a single short query for a given chunk of text from a clinical trial protocol document.
+The query MUST be concise and reflect the main idea of the chunk.
+Ensure query reflects the title (denoted by ## <title>).
+
 Requirements:
-- Use only information explicitly present in the provided section.
 - Do not add, infer, or assume any new information.
 - Do not include explanations, comments, or extra text.
-
 
 Return ONLY valid JSON in the following format:
 {{"query": "<generated query>"}}
 
-SECTION:
+CHUNK:
 {section}
 
 
@@ -74,9 +67,11 @@ def split_chunks(raw_file: str) -> list[str]:
 
 
 def generate_query(section: str) -> str:
+    headlines: list[str] = extract_titles(section)
     section = truncate_tokens(section.strip(), settings.max_tokens)
     prompt = _QUERY_PROMPT.format(section=section)
-    return generate_structured(prompt, Query).query.strip()
+    query = generate_structured(prompt, Query).query
+    return " ".join(headlines) + "\n" + query.strip()
 
 
 def _queries_path(source: str) -> Path:
@@ -114,6 +109,8 @@ def index_documents(
     progress_callback: Callable[[float], None] | None = None,
 ) -> tuple[int, bool]:
     from qdrant_client.models import PointStruct
+
+    from core.vectorstore import DENSE, SPARSE
 
     if not docs:
         if progress_callback:

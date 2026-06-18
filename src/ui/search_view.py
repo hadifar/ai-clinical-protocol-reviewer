@@ -22,15 +22,16 @@ def render() -> None:
     if not query:
         return
 
-    candidates = search(query, k=10)
-    results = rerank(query, candidates, top_n=5)
+    results = search(query, k=10)
+    if settings.apply_reranking:
+        results = rerank(query, results, top_n=5)
 
     st.caption(f"Top {len(results)} results")
     for rank, r in enumerate(results, 1):
         with st.container(border=True):
             st.markdown(
                 f"**#{rank}** · score `{r['score']:.4f}` · "
-                f"rerank-score: {r['rerank_score']} . "
+                f"rerank-score: {r.get('rerank_score', '-')} . "
                 f"matched **{r['matched_kind']}** · "
                 f"chunk {r['chunk_index']} "
             )
