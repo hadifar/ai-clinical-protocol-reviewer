@@ -1,6 +1,6 @@
 import streamlit as st
 
-from ui import ingest_view, search_view
+from ui import agent_view, ingest_view, search_view
 
 footer = """<style>
 a:link , a:visited{
@@ -38,7 +38,16 @@ def render():
             url_path="ingestion",
         ),
         st.Page(
-            search_view.render, title="Search pipeline", icon="🔍", url_path="search"
+            search_view.render,
+            title="Search pipeline",
+            icon="🔍",
+            url_path="search"
+        ),
+        st.Page(
+            agent_view.render,
+            title="Extraction agent",
+            icon="🤖",
+            url_path="agent",
         ),
     ]
 

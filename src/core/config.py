@@ -25,7 +25,8 @@ class Settings(BaseSettings):
     ollama_num_ctx: int = 8192
     qdrant_collection: str = "clinical_chunks"
 
-    apply_reranking: bool = False
+    apply_reranking: bool = True
+    agent_search_k: int = 5
 
     data_dir: Path = ROOT / "data"
 

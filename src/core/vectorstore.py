@@ -46,6 +46,30 @@ def index_exists() -> bool:
         return False
 
 
+def get_chunk(chunk_index: int, source: str | None = None) -> str | None:
+    from qdrant_client.models import FieldCondition, Filter, MatchValue
+
+    client = get_client()
+    if not client.collection_exists(settings.qdrant_collection):
+        return None
+    must = [
+        FieldCondition(key="chunk_index", match=MatchValue(value=chunk_index)),
+        FieldCondition(key="kind", match=MatchValue(value="chunk")),
+    ]
+    if source:
+        must.append(FieldCondition(key="source", match=MatchValue(value=source)))
+    points, _ = client.scroll(
+        settings.qdrant_collection,
+        scroll_filter=Filter(must=must),
+        limit=1,
+        with_payload=True,
+    )
+    if not points:
+        return None
+    payload = points[0].payload
+    return payload.get("original", payload.get("text"))
+
+
 def source_indexed(source: str) -> int:
     from qdrant_client.models import FieldCondition, Filter, MatchValue
 

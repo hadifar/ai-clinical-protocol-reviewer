@@ -5,7 +5,6 @@ import streamlit as st
 from core.config import settings
 from core.vectorstore import index_exists, vector_count
 from services.rank import search
-from services.rerank import rerank
 
 
 def render() -> None:
@@ -23,8 +22,6 @@ def render() -> None:
         return
 
     results = search(query, k=10)
-    if settings.apply_reranking:
-        results = rerank(query, results, top_n=5)
 
     st.caption(f"Top {len(results)} results")
     for rank, r in enumerate(results, 1):
