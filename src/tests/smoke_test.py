@@ -1,4 +1,4 @@
-from pipeline import generate_query
+from services.ingestion import generate_query
 
 sections = [
     """

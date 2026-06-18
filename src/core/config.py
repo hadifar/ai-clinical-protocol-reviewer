@@ -5,7 +5,7 @@ from pathlib import Path
 from pydantic import computed_field
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
-ROOT = Path(__file__).resolve().parents[1]
+ROOT = Path(__file__).resolve().parents[2]
 
 
 class Settings(BaseSettings):
@@ -19,7 +19,7 @@ class Settings(BaseSettings):
     embed_dimension: int = 1024
     max_tokens: int = 6000
     sparse_model: str = "Qdrant/bm25"
-    
+
     ollama_model: str = "gemma3"
     ollama_base_url: str = "http://localhost:11434"
     ollama_num_ctx: int = 8192

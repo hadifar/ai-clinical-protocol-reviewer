@@ -1,1 +1,1 @@
-# Cluepoints take-home challenge
+# Cluepoints
