@@ -8,10 +8,10 @@ from pathlib import Path
 
 from core.config import settings
 from core.embeddings import embed_dense, embed_sparse
-from core.llm import generate_structured
 from core.text import extract_titles, truncate_tokens
 from core.vectorstore import ensure_collection, get_client, source_indexed
 from models.schemas import Query
+from services.ai_agent import generate_structured
 
 _QUERY_PROMPT = """You are tasked with generating a single short query for a given chunk of text from a clinical trial protocol document.
 The query MUST be concise and reflect the main idea of the chunk.

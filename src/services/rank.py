@@ -2,10 +2,10 @@ from __future__ import annotations
 
 from core.config import settings
 from core.embeddings import embed_dense, embed_sparse
-from core.llm import generate_structured
 from core.text import truncate_tokens
 from core.vectorstore import DENSE, SPARSE, get_client
 from models.schemas import Relevance
+from services.ai_agent import generate_structured
 
 _RERANK_PROMPT = """You are reranking agent.
 
