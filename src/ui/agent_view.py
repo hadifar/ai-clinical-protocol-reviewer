@@ -34,9 +34,10 @@ def render() -> None:
 
     attribute = st.text_input(
         "Attribute / query",
-        placeholder="e.g. primary endpoint, sample size, sponsor name",
+        placeholder="e.g. primary study objective, Schedule of Activities",
     )
-    if not (attribute and st.button("Extract", type="primary")):
+
+    if not attribute:
         return
 
     with st.spinner("Agent is searching the index…"):
