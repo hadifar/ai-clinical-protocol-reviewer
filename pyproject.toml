@@ -19,6 +19,7 @@ dependencies = [
 [dependency-groups]
 dev = [
     "pre-commit>=4.6.0",
+    "pyright>=1.1.410",
     "ruff>=0.15.17",
 ]
 
@@ -31,6 +32,13 @@ target-version = "py312"
 [tool.ruff.lint]
 select = ["E", "F", "I", "B", "UP", "SIM", "C4"]  # errors, pyflakes, isort, bugbear, pyupgrade, simplify, comprehensions
 ignore = ["E501"]  # let the formatter handle line length
+
+[tool.pyright]
+include = ["src"]
+pythonVersion = "3.12"
+venvPath = "."
+venv = ".venv"
+typeCheckingMode = "basic"  # tighten to "standard"/"strict" later
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]

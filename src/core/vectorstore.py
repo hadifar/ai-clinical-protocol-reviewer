@@ -47,12 +47,12 @@ def index_exists() -> bool:
 
 
 def get_chunk(chunk_index: int, source: str | None = None) -> str | None:
-    from qdrant_client.models import FieldCondition, Filter, MatchValue
+    from qdrant_client.models import Condition, FieldCondition, Filter, MatchValue
 
     client = get_client()
     if not client.collection_exists(settings.qdrant_collection):
         return None
-    must = [
+    must: list[Condition] = [
         FieldCondition(key="chunk_index", match=MatchValue(value=chunk_index)),
         FieldCondition(key="kind", match=MatchValue(value="chunk")),
     ]

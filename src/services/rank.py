@@ -47,7 +47,7 @@ def search(query: str, k: int = 12, top_n=4) -> list[dict]:
 
     best: dict[tuple, dict] = {}
     for point in response.points:
-        m = point.payload
+        m = point.payload or {}
         score = point.score
         key = (m.get("source"), m.get("chunk_index"))
         if key not in best or score > best[key]["score"]:
