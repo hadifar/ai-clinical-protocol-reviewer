@@ -5,7 +5,7 @@ import streamlit as st
 from core.vectorstore import index_exists
 from services.agent_service import invoke_agent
 
-target_attributes = {
+_TARGET_ATTRIBUTES = {
     "primary_study_objectives": "Primary study objectives",
     "secondary_study_objective": "Secondary study objectives",
     "primary_endpoints": "Primary endpoints",
@@ -48,19 +48,19 @@ def render() -> None:
 
     option = st.selectbox(
         label="Select one of the following topic for ",
-        options=list(target_attributes.keys()),
+        options=list(_TARGET_ATTRIBUTES.keys()),
         index=None,
         placeholder="",
-        format_func=lambda k: target_attributes[k],
+        format_func=lambda k: _TARGET_ATTRIBUTES[k],
     )
 
     if not option:
         return
 
     with st.spinner("Agent is searching the index…"):
-        info, messages = invoke_agent(target_attributes[option])
+        info, messages = invoke_agent(_TARGET_ATTRIBUTES[option])
 
     st.markdown("**Result**")
     st.write("")
-    st.json({target_attributes[option]: info})
+    st.json({_TARGET_ATTRIBUTES[option]: info})
     _render_trace(messages)
