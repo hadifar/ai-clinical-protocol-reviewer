@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from functools import lru_cache
-from typing import cast
+from typing import Any, cast
 
 from pydantic import BaseModel
 
@@ -82,9 +82,7 @@ def _build_tools():
     return [search_chunks, read_chunk]
 
 
-def _invoke_exception_handler(inputs: dict) -> dict:
-    """Fallback when the agent run raises: return the same state shape as a normal
-    run (real message objects + structured_response) so callers don't crash."""
+def _invoke_exception_handler(inputs: Any) -> dict:
     from langchain_core.messages import AIMessage
 
     return {

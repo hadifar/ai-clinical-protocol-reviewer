@@ -32,19 +32,16 @@ GENERATED QUERY:
 """
 
 
-def pdf_to_markdown(pdf_path: str | Path) -> str:
+def convert_pdf(pdf_path: str | Path) -> tuple[str, Path, bool]:
     from docling.document_converter import DocumentConverter
 
-    converter = DocumentConverter()
-    result = converter.convert(str(pdf_path))
-    return result.document.export_to_markdown()
-
-
-def convert_pdf(pdf_path: str | Path) -> tuple[str, Path, bool]:
     md_path = settings.output_dir / f"{Path(pdf_path).stem}.md"
     if md_path.exists():
         return md_path.read_text(), md_path, True
-    raw_md = pdf_to_markdown(pdf_path)
+
+    converter = DocumentConverter()
+    result = converter.convert(str(pdf_path))
+    raw_md = result.document.export_to_markdown()
     md_path.write_text(raw_md)
     return raw_md, md_path, False
 
@@ -106,7 +103,7 @@ def index_documents(
     docs: list[dict],
     source: str | None = None,
     batch_size: int = 16,
-    progress_callback: Callable[[float], None] | None = None,
+    progress_callback: Callable[[float], object] | None = None,
 ) -> tuple[int, bool]:
     from qdrant_client.models import PointStruct
 

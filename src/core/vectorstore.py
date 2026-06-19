@@ -67,7 +67,11 @@ def get_chunk(chunk_index: int, source: str | None = None) -> str | None:
     if not points:
         return None
     payload = points[0].payload
-    return payload.get("original", payload.get("text"))
+
+    if payload:
+        return payload.get("original", payload.get("text"))
+    else:
+        return None
 
 
 def source_indexed(source: str) -> int:

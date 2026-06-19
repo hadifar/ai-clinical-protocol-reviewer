@@ -38,14 +38,11 @@ def render():
             url_path="ingestion",
         ),
         st.Page(
-            search_view.render,
-            title="Search pipeline",
-            icon="🔍",
-            url_path="search"
+            search_view.render, title="Search pipeline", icon="🔍", url_path="search"
         ),
         st.Page(
             agent_view.render,
-            title="Extraction agent",
+            title="IE agent",
             icon="🤖",
             url_path="agent",
         ),
