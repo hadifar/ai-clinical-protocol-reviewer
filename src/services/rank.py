@@ -2,37 +2,16 @@ from __future__ import annotations
 
 from core.config import settings
 from core.embeddings import embed_dense, embed_sparse
-from core.text import truncate_tokens
+from core.prompts import RERANK_PROMPT
+from core.text_utils import truncate_tokens
 from core.vectorstore import DENSE, SPARSE, get_client
 from models.schemas import Relevance
 from services.ai_agent import generate_structured
 
-_RERANK_PROMPT = """You are reranking agent.
-
-Rate how well the SECTION below lets to extract the information about the QUERY, using an integer score from 0 to 10:
-- 0  = unrelated; garbage or noisy text; no information is here.
-- 3  = same general topic, but the specific information is missing.
-- 7  = the information is present but partial, implicit, or mixed with unrelated content.
-- 10 = the section explicitly and completely states the information about the query.
-
-Judge only whether the answer is present, not how well written the section is.
-
-Return ONLY valid JSON in the following format:
-{{"relevance": <integer 0-10>}}
-
-QUERY:
-{query}
-
-SECTION:
-{section}
-
-RELEVANCE:
-"""
-
 
 def rerank_score(query: str, text: str) -> int:
     section = truncate_tokens(text.strip(), settings.max_tokens)
-    prompt = _RERANK_PROMPT.format(query=query.strip(), section=section)
+    prompt = RERANK_PROMPT.format(query=query.strip(), section=section)
     return generate_structured(prompt, Relevance).relevance
 
 

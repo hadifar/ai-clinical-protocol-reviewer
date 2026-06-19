@@ -6,33 +6,11 @@ from typing import Any, cast
 from pydantic import BaseModel
 
 from core.config import settings
+from core.prompts import IE_PROMPT
 from core.vectorstore import get_chunk
 from models.schemas import IEAgentResponse
 
 _PREVIEW_N_WORDS = 120
-
-
-SYSTEM_PROMPT = """You are an information extraction agent for clinical trial protocols.
-You are given a single attribute or query. Your job is to find the precise piece of
-information regarding that attribute in the indexed document.
-
-You have two tools:
-- search_chunks(query: str): semantic search over the document. Returns candidate chunks
-  (chunk_index, short preview).
-- read_chunk(chunk_index): returns the full text of the chunk with that chunk_index.
-
-Strategy:
-1. Call search_chunks with a focused query derived from the attribute.
-2. Look at the previews and call read_chunk on the most promising candidate(s) to read
-   the full text before answering.
-3. If needed, refine your query and repeat.
-4. Be extractive; do not invent details that are not in the document.
-
-When you are done, return the extracted information as JSON (no preamble, no explanation) in the following format:
-
-{{"info": "<extracted text>", "cited_chunk_indices": [<int>, ...]}}
-
-"""
 
 
 @lru_cache(maxsize=1)
@@ -101,7 +79,7 @@ def invoke_agent(attribute: str) -> tuple[str, list]:
     agent = create_agent(
         model=get_model(),
         tools=_build_tools(),
-        system_prompt=SYSTEM_PROMPT,
+        system_prompt=IE_PROMPT,
         response_format=IEAgentResponse,
     )
 

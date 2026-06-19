@@ -8,28 +8,11 @@ from pathlib import Path
 
 from core.config import settings
 from core.embeddings import embed_dense, embed_sparse
-from core.text import extract_titles, truncate_tokens
+from core.text_utils import extract_titles, truncate_tokens
 from core.vectorstore import ensure_collection, get_client, source_indexed
 from models.schemas import Query
 from services.ai_agent import generate_structured
-
-_QUERY_PROMPT = """You are tasked with generating a single short query for a given chunk of text from a clinical trial protocol document.
-The query MUST be concise and reflect the main idea of the chunk.
-Ensure query reflects the title (denoted by ## <title>).
-
-Requirements:
-- Do not add, infer, or assume any new information.
-- Do not include explanations, comments, or extra text.
-
-Return ONLY valid JSON in the following format:
-{{"query": "<generated query>"}}
-
-CHUNK:
-{section}
-
-
-GENERATED QUERY:
-"""
+from core.prompts import QUERY_GEN_PROMPT
 
 
 def convert_pdf(pdf_path: str | Path) -> tuple[str, Path, bool]:
@@ -66,7 +49,7 @@ def split_chunks(raw_file: str) -> list[str]:
 def generate_query(section: str) -> str:
     headlines: list[str] = extract_titles(section)
     section = truncate_tokens(section.strip(), settings.max_tokens)
-    prompt = _QUERY_PROMPT.format(section=section)
+    prompt = QUERY_GEN_PROMPT.format(section=section)
     query = generate_structured(prompt, Query).query
     return " ".join(headlines) + "\n" + query.strip()
 
