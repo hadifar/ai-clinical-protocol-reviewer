@@ -58,9 +58,9 @@ def render() -> None:
         return
 
     with st.spinner("Agent is searching the index…"):
-        info, messages = invoke_agent(_TARGET_ATTRIBUTES[option])
+        structured_info, messages = invoke_agent(_TARGET_ATTRIBUTES[option])
 
     st.markdown("**Result**")
     st.write("")
-    st.json({_TARGET_ATTRIBUTES[option]: info})
+    st.json(structured_info)
     _render_trace(messages)

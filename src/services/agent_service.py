@@ -1,33 +1,16 @@
 from __future__ import annotations
 
-from functools import lru_cache
-from typing import Any, cast
+from typing import Any
 
-from pydantic import BaseModel
+from langchain.agents.structured_output import ToolStrategy
 
 from core.config import settings
+from core.llm import get_model
 from core.prompts import IE_PROMPT
 from core.vectorstore import get_chunk
 from models.schemas import IEAgentResponse
 
 _PREVIEW_N_WORDS = 120
-
-
-@lru_cache(maxsize=1)
-def get_model():
-    from langchain_ollama import ChatOllama
-
-    return ChatOllama(
-        model=settings.ollama_model,
-        base_url=settings.ollama_base_url,
-        num_ctx=settings.ollama_num_ctx,
-        temperature=0,
-    )
-
-
-def generate_structured[T: BaseModel](prompt: str, schema: type[T]) -> T:
-    result = get_model().with_structured_output(schema).invoke(prompt)
-    return cast(T, result)
 
 
 def _build_tools():
@@ -60,14 +43,15 @@ def _build_tools():
     return [search_chunks, read_chunk]
 
 
-def _invoke_exception_handler(inputs: Any) -> dict:
+def _exception_handler(inputs: Any) -> dict:
     from langchain_core.messages import AIMessage
 
     return {
         "messages": [
             *inputs["messages"],
-            AIMessage(content="FAILED"),
-        ]
+            AIMessage(content="Process failed..."),
+        ],
+        "structured_response": IEAgentResponse(info="", cited_chunk_indices=[]),
     }
 
 
@@ -76,18 +60,20 @@ def invoke_agent(attribute: str) -> tuple[str, list]:
     from langchain_core.messages import HumanMessage
     from langchain_core.runnables import RunnableLambda
 
-    agent = create_agent(
-        model=get_model(),
-        tools=_build_tools(),
-        system_prompt=IE_PROMPT,
-        response_format=IEAgentResponse,
+    agent = (
+        create_agent(
+            model=get_model(),
+            tools=_build_tools(),
+            system_prompt=IE_PROMPT,
+            response_format=ToolStrategy(IEAgentResponse),
+            debug=True,
+        )
+        .with_retry(stop_after_attempt=3)
+        .with_fallbacks([RunnableLambda(_exception_handler)])
     )
-
-    agent = agent.with_fallbacks([RunnableLambda(_invoke_exception_handler)])
 
     state = agent.invoke(
         {"messages": [HumanMessage(content=f"attribute: {attribute}")]}
     )
-    messages = state["messages"]
-    info = (messages[-1].content or "").strip()
-    return info, messages
+
+    return state["structured_response"], state["messages"]

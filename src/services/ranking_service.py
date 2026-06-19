@@ -2,11 +2,11 @@ from __future__ import annotations
 
 from core.config import settings
 from core.embeddings import embed_dense, embed_sparse
+from core.llm import generate_structured
 from core.prompts import RERANK_PROMPT
 from core.text_utils import truncate_tokens
 from core.vectorstore import DENSE, SPARSE, get_client
 from models.schemas import Relevance
-from services.agent_service import generate_structured
 
 
 def expand_query(query: str) -> list[str]:
@@ -18,7 +18,8 @@ def expand_query(query: str) -> list[str]:
 def rerank_score(query: str, text: str) -> int:
     section = truncate_tokens(text.strip(), settings.max_tokens)
     prompt = RERANK_PROMPT.format(query=query.strip(), section=section)
-    return generate_structured(prompt, Relevance).relevance
+    response = generate_structured(prompt, Relevance)
+    return response.relevance
 
 
 def rerank(query: str, results: list[dict], top_n: int | None = None) -> list[dict]:
