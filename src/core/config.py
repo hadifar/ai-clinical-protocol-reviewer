@@ -26,6 +26,8 @@ class Settings(BaseSettings):
     qdrant_collection: str = "clinical_chunks"
 
     apply_reranking: bool = True
+    apply_query_expansion: bool = True
+
     agent_search_k: int = 5
 
     data_dir: Path = ROOT / "data"

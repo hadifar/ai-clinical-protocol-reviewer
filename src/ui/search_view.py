@@ -4,7 +4,7 @@ import streamlit as st
 
 from core.config import settings
 from core.vectorstore import index_exists, vector_count
-from services.rank import search
+from services.ranking_service import search
 
 
 def render() -> None:

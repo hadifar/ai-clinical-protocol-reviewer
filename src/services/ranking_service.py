@@ -6,7 +6,13 @@ from core.prompts import RERANK_PROMPT
 from core.text_utils import truncate_tokens
 from core.vectorstore import DENSE, SPARSE, get_client
 from models.schemas import Relevance
-from services.ai_agent import generate_structured
+from services.agent_service import generate_structured
+
+
+def expand_query(query: str) -> list[str]:
+    # TODO: mock QE, more info is needed
+    q = query.strip()
+    return [q]
 
 
 def rerank_score(query: str, text: str) -> int:
@@ -32,14 +38,16 @@ def rerank(query: str, results: list[dict], top_n: int | None = None) -> list[di
 def search(query: str, k: int = 12, top_n=4) -> list[dict]:
     from qdrant_client.models import Fusion, FusionQuery, Prefetch
 
-    dense = embed_dense([query])[0]
-    sparse = embed_sparse([query])[0]
+    queries = expand_query(query)
+    dense = embed_dense(queries)
+    sparse = embed_sparse(queries)
+    prefetch = []
+    for d, s in zip(dense, sparse, strict=True):
+        prefetch.append(Prefetch(query=d, using=DENSE, limit=k * 4))
+        prefetch.append(Prefetch(query=s, using=SPARSE, limit=k * 4))
     response = get_client().query_points(
         settings.qdrant_collection,
-        prefetch=[
-            Prefetch(query=dense, using=DENSE, limit=k * 4),
-            Prefetch(query=sparse, using=SPARSE, limit=k * 4),
-        ],
+        prefetch=prefetch,
         query=FusionQuery(fusion=Fusion.RRF),
         limit=k * 4,
         with_payload=True,

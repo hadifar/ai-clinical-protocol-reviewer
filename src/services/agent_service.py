@@ -33,7 +33,7 @@ def generate_structured[T: BaseModel](prompt: str, schema: type[T]) -> T:
 def _build_tools():
     from langchain_core.tools import tool
 
-    from services.rank import search
+    from services.ranking_service import search
 
     @tool
     def search_chunks(query: str) -> str:

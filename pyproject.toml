@@ -1,5 +1,5 @@
 [project]
-name = "cluepoint-challenge"
+name = "cluepoint"
 version = "1.0.0"
 description = "AI-driven tooling to improve clinical trial data quality and review."
 readme = "README.md"
@@ -11,7 +11,6 @@ dependencies = [
     "langchain>=1.3.9",
     "langchain-ollama>=1.1.0",
     "langgraph>=1.2.5",
-    "ollama>=0.6.2",
     "qdrant-client>=1.18.0",
     "streamlit>=1.58.0",
 ]

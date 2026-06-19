@@ -3,7 +3,7 @@ from __future__ import annotations
 import streamlit as st
 
 from core.vectorstore import index_exists
-from services.ai_agent import invoke_agent
+from services.agent_service import invoke_agent
 
 target_attributes = {
     "primary_study_objectives": "Primary study objectives",

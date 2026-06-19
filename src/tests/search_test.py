@@ -1,4 +1,4 @@
-from services.rank import search
+from services.ranking_service import search
 
 results = search("primary study objectives")
 for r in results:
