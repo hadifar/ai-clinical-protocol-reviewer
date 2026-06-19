@@ -8,11 +8,11 @@ from pathlib import Path
 
 from core.config import settings
 from core.embeddings import embed_dense, embed_sparse
+from core.prompts import QUERY_GEN_PROMPT
 from core.text_utils import extract_titles, truncate_tokens
 from core.vectorstore import ensure_collection, get_client, source_indexed
 from models.schemas import Query
 from services.ai_agent import generate_structured
-from core.prompts import QUERY_GEN_PROMPT
 
 
 def convert_pdf(pdf_path: str | Path) -> tuple[str, Path, bool]:
