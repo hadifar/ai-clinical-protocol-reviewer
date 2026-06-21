@@ -14,6 +14,19 @@ from models.schemas import IEAgentResponse
 _PREVIEW_N_WORDS = 120
 
 
+# class GroundingGuardrailMiddleware(AgentMiddleware):
+#     def after_agent(self, state, runtime) -> dict | None:
+#         resp = state.get("structured_response")
+#         if resp is None:
+#             return None
+#         # Mock guardrail: drop citations that don't resolve to a real chunk,
+#         # and blank the answer if nothing is grounded.
+#         valid = [c for c in resp.cited_chunk_indices if get_chunk(c) is not None]
+#         if valid == resp.cited_chunk_indices:
+#             return None
+#         return state
+
+
 def _build_tools():
     from langchain_core.tools import tool
 
@@ -79,6 +92,7 @@ def invoke_agent(attribute_key: str) -> tuple[dict, list]:
                     tool_name="read_chunk",
                     thread_limit=6,
                 ),
+                # GroundingGuardrailMiddleware(),
             ],
             debug=True,
         )
