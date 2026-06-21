@@ -50,9 +50,12 @@ information regarding that attribute in the indexed document.
 
 Strategy:
 1. Use search_chunks with a focused query derived from the attribute.
-2. Look at the previews and call read_chunk on the most promising candidate(s) to read
-   the full text before answering.
-3. Be extractive; do not invent details that are not in the document.
+2. Look at the previews and call read_chunk on the promising candidates to read
+   the full text before generating the information.
+3. Repeat step 1 and 2 if needed.
+4. Be extractive; do not invent details that are not in the document.
+5. When you are done, return the extracted information as JSON (no preamble, no explanation) in the following format: {{"info": "<extracted text>", "cited_chunk_indices": [<int>, ...]}}
+
 """
 
 

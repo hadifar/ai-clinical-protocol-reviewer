@@ -18,7 +18,8 @@ def _render_trace(messages: list) -> None:
                 st.caption(f"↳ {msg.name} returned:")
                 st.code(msg.content, language="text")
             elif msg.type == "ai" and msg.content:
-                st.markdown(f"🤖 {msg.content}")
+                st.caption("↳ AI returned:")
+                st.markdown(f"{msg.content}")
 
 
 def render() -> None:
@@ -45,6 +46,7 @@ def render() -> None:
             structured_info, messages = invoke_agent(option)
 
         st.markdown("**Result**")
-        st.write("")
+        st.write("---")
         st.json(structured_info)
+        st.write("---")
         _render_trace(messages)

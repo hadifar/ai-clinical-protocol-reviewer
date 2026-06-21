@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from typing import Any
 
-from langchain.agents.structured_output import ToolStrategy
+from langchain.agents.structured_output import ProviderStrategy
 
 from core.config import settings
 from core.constants import TARGET_ATTRIBUTES
@@ -56,8 +56,9 @@ def _exception_handler(inputs: Any) -> dict:
     }
 
 
-def invoke_agent(attribute_key: str) -> tuple[str, list]:
+def invoke_agent(attribute_key: str) -> tuple[dict, list]:
     from langchain.agents import create_agent
+    from langchain.agents.middleware import ToolCallLimitMiddleware
     from langchain_core.messages import HumanMessage
     from langchain_core.runnables import RunnableLambda
 
@@ -68,7 +69,17 @@ def invoke_agent(attribute_key: str) -> tuple[str, list]:
             model=get_model(),
             tools=_build_tools(),
             system_prompt=build_ie_prompt(attribute_key),
-            response_format=ToolStrategy(IEAgentResponse),
+            response_format=ProviderStrategy(IEAgentResponse),
+            middleware=[
+                ToolCallLimitMiddleware(
+                    tool_name="search_chunks",
+                    run_limit=2,
+                ),
+                ToolCallLimitMiddleware(
+                    tool_name="read_chunk",
+                    thread_limit=6,
+                ),
+            ],
             debug=True,
         )
         .with_retry(stop_after_attempt=3)
@@ -79,4 +90,13 @@ def invoke_agent(attribute_key: str) -> tuple[str, list]:
         {"messages": [HumanMessage(content=f"attribute: {attribute}")]}
     )
 
-    return state["structured_response"], state["messages"]
+    # TODO: issue with low capability models
+    if state.get("structured_response") is None:
+        state["structured_response"] = IEAgentResponse(info="", cited_chunk_indices=[])
+
+    response = state["structured_response"]
+    result = {
+        attribute_key: response.info,
+        "cited_chunk_indices": response.cited_chunk_indices,
+    }
+    return result, state["messages"]
