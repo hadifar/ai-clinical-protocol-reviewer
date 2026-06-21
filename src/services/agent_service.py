@@ -5,8 +5,9 @@ from typing import Any
 from langchain.agents.structured_output import ToolStrategy
 
 from core.config import settings
+from core.constants import TARGET_ATTRIBUTES
 from core.llm import get_model
-from core.prompts import IE_PROMPT
+from core.prompts import build_ie_prompt
 from core.vectorstore import get_chunk
 from models.schemas import IEAgentResponse
 
@@ -55,16 +56,18 @@ def _exception_handler(inputs: Any) -> dict:
     }
 
 
-def invoke_agent(attribute: str) -> tuple[str, list]:
+def invoke_agent(attribute_key: str) -> tuple[str, list]:
     from langchain.agents import create_agent
     from langchain_core.messages import HumanMessage
     from langchain_core.runnables import RunnableLambda
+
+    attribute = TARGET_ATTRIBUTES.get(attribute_key, attribute_key)
 
     agent = (
         create_agent(
             model=get_model(),
             tools=_build_tools(),
-            system_prompt=IE_PROMPT,
+            system_prompt=build_ie_prompt(attribute_key),
             response_format=ToolStrategy(IEAgentResponse),
             debug=True,
         )

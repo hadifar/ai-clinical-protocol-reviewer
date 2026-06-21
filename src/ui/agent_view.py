@@ -2,22 +2,9 @@ from __future__ import annotations
 
 import streamlit as st
 
+from core.constants import TARGET_ATTRIBUTES
 from core.vectorstore import index_exists
 from services.agent_service import invoke_agent
-
-_TARGET_ATTRIBUTES = {
-    "primary_study_objectives": "Primary study objectives",
-    "secondary_study_objective": "Secondary study objectives",
-    "primary_endpoints": "Primary endpoints",
-    "exploratory_endpoints": "Exploratory endpoints",
-    "schedule_of_activities_table": "Schedule of Activities (SoA) as a structured table",
-    "inclusion_criteria": "Inclusion Criteria",
-    "exclusion_criteria": "Exclusion Criteria",
-    "visit_definition": "Visit Definition",
-    "visit_timing": "Visit timing",
-    "Key_assessments_and_procedures": "Key assessments and procedures",
-    "safety_monitoring_rules": "Safety monitoring rules",
-}
 
 
 def _render_trace(messages: list) -> None:
@@ -47,15 +34,15 @@ def render() -> None:
 
     option = st.selectbox(
         label="Select one of the following topic for ",
-        options=list(_TARGET_ATTRIBUTES.keys()),
+        options=list(TARGET_ATTRIBUTES.keys()),
         index=None,
         placeholder="",
-        format_func=lambda k: _TARGET_ATTRIBUTES[k],
+        format_func=lambda k: TARGET_ATTRIBUTES[k],
     )
 
     if option:
         with st.spinner("Agent is working…"):
-            structured_info, messages = invoke_agent(_TARGET_ATTRIBUTES[option])
+            structured_info, messages = invoke_agent(option)
 
         st.markdown("**Result**")
         st.write("")
