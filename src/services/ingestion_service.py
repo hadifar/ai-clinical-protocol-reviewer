@@ -71,18 +71,38 @@ def save_queries(source: str, queries: list[str]) -> None:
 
 def build_documents(chunks: list[str], queries: list[str], source: str) -> list[dict]:
     docs: list[dict] = []
-    limit = settings.max_tokens
     for i, (chunk, query) in enumerate(zip(chunks, queries, strict=False)):
-        meta = {"chunk_index": i, "source": source, "original": chunk}
         title = " ".join(extract_titles(chunk)).strip()
-        docs.append({**meta, "kind": "chunk", "text": truncate_tokens(chunk, limit)})
+        meta = {
+            "chunk_index": i,
+            "source": source,
+            "section": chunk,
+            "summary": query,
+            "title": title,
+        }
+
+        docs.append(
+            {
+                **meta,
+                "kind": "chunk",
+                "text": truncate_tokens(chunk, settings.max_tokens),
+            }
+        )
         if title:
             docs.append(
-                {**meta, "kind": "title", "text": truncate_tokens(title, limit)}
+                {
+                    **meta,
+                    "kind": "title",
+                    "text": truncate_tokens(title, settings.max_tokens),
+                }
             )
         if query:
             docs.append(
-                {**meta, "kind": "query", "text": truncate_tokens(query, limit)}
+                {
+                    **meta,
+                    "kind": "query",
+                    "text": truncate_tokens(query, settings.max_tokens),
+                }
             )
     return docs
 

@@ -33,7 +33,10 @@ def render() -> None:
                 f"chunk {r['chunk_index']} "
             )
 
+            if r.get("summary"):
+                st.caption(f"Doc2query: {r['summary']}")
+
             if r["matched_kind"] == "query":
                 st.caption(f"matched query: {r['matched_text']}")
 
-            st.markdown(r["original"])
+            st.markdown(r["section"])

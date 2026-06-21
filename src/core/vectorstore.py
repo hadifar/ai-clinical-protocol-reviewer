@@ -76,7 +76,7 @@ def get_chunk(chunk_index: int, source: str | None = None) -> str | None:
     payload = points[0].payload
 
     if payload:
-        return payload.get("original", payload.get("text"))
+        return payload.get("section", payload.get("text"))
     else:
         return None
 

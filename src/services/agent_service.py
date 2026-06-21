@@ -11,7 +11,7 @@ from core.prompts import build_ie_prompt
 from core.vectorstore import get_chunk
 from models.schemas import IEAgentResponse
 
-_PREVIEW_N_WORDS = 120
+_PREVIEW_N_WORDS = 250
 
 
 # class GroundingGuardrailMiddleware(AgentMiddleware):
@@ -42,7 +42,9 @@ def _build_tools():
             return "No matching chunks found."
         lines = []
         for r in results:
-            preview = " ".join((r["original"] or "").split())[:_PREVIEW_N_WORDS]
+            header = (r.get("title") or "").strip()
+            body = (r.get("summary") or r.get("section") or "").strip()
+            preview = " ".join(f"{header} {body}".split())[:_PREVIEW_N_WORDS]
             lines.append(f"chunk {r['chunk_index']} · {preview}…")
         return "\n".join(lines)
 

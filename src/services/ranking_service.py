@@ -27,7 +27,7 @@ def rerank(query: str, results: list[dict], top_n: int | None = None) -> list[di
         {
             **r,
             "rerank_score": rerank_score(
-                query, r.get("original") or r.get("matched_text", "")
+                query, r.get("section") or r.get("matched_text", "")
             ),
         }
         for r in results
@@ -36,7 +36,7 @@ def rerank(query: str, results: list[dict], top_n: int | None = None) -> list[di
     return reranked[:top_n] if top_n is not None else reranked
 
 
-def search(query: str, k: int = 12, top_n=4) -> list[dict]:
+def search(query: str, k: int = 12, top_n=5) -> list[dict]:
     from qdrant_client.models import Fusion, FusionQuery, Prefetch
 
     queries = expand_query(query)
@@ -66,7 +66,9 @@ def search(query: str, k: int = 12, top_n=4) -> list[dict]:
                 "chunk_index": m.get("chunk_index"),
                 "matched_kind": m.get("kind"),
                 "matched_text": m.get("text"),
-                "original": m.get("original", m.get("text")),
+                "section": m.get("section", m.get("text")),
+                "summary": m.get("summary"),
+                "title": m.get("title"),
             }
     ranked = sorted(best.values(), key=lambda r: r["score"], reverse=True)
 

@@ -34,7 +34,7 @@ def render() -> None:
         return
 
     option = st.selectbox(
-        label="Select one of the following topic for ",
+        label="Select one of the following topic",
         options=list(TARGET_ATTRIBUTES.keys()),
         index=None,
         placeholder="",
