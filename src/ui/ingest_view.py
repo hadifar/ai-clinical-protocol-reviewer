@@ -69,5 +69,5 @@ def render() -> None:
 
     with st.expander("Preview chunks & generated queries"):
         for i, (c, q) in enumerate(zip(chunks, queries, strict=False)):
-            st.markdown(f"**Chunk {i}** — query: _{q}_")
+            st.markdown(f"**Chunk {i}** — doc2query: _{q}_")
             st.code(c[:1000] + ("..." if len(c) > 500 else ""))

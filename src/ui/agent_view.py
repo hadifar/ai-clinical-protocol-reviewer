@@ -21,7 +21,6 @@ _TARGET_ATTRIBUTES = {
 
 
 def _render_trace(messages: list) -> None:
-    """Show the agent's tool calls and observations."""
     with st.expander("Agent reasoning trace", expanded=False):
         for msg in messages:
             tool_calls = getattr(msg, "tool_calls", None)
@@ -54,13 +53,11 @@ def render() -> None:
         format_func=lambda k: _TARGET_ATTRIBUTES[k],
     )
 
-    if not option:
-        return
+    if option:
+        with st.spinner("Agent is working…"):
+            structured_info, messages = invoke_agent(_TARGET_ATTRIBUTES[option])
 
-    with st.spinner("Agent is searching the index…"):
-        structured_info, messages = invoke_agent(_TARGET_ATTRIBUTES[option])
-
-    st.markdown("**Result**")
-    st.write("")
-    st.json(structured_info)
-    _render_trace(messages)
+        st.markdown("**Result**")
+        st.write("")
+        st.json(structured_info)
+        _render_trace(messages)

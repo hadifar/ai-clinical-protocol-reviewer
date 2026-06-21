@@ -1,8 +1,12 @@
 from services.ingestion_service import generate_query
 
 sections = [
-    """
-## PROTOCOL AMENDMENT SUMMARY OF CHANGES TABLE
+    """## TITLE PAGE
+
+A Phase III Randomized, Double-blind, Placebo-controlled Multicenter Study in Adults to Determine the Safety, Efficacy, and Immunogenicity of AZD1222, a Non-replicating ChAdOx1 Vector Vaccine, for the Prevention of COVID-19
+
+Sponsor Name:""",
+    """## PROTOCOL AMENDMENT SUMMARY OF CHANGES TABLE
 
 | DOCUMENTHISTORY   | DOCUMENTHISTORY   |
 |-------------------|-------------------|

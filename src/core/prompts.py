@@ -1,19 +1,23 @@
-QUERY_GEN_PROMPT = """You are tasked with generating a single short query for a given chunk of text from a clinical trial protocol document.
-The query MUST be concise and reflect the main idea of the chunk.
-Ensure query reflects the title (denoted by ## <title>).
+DOC2QUERY_PROMPT = """You are tasked with generating a single sentence summary.
+The summary MUST be concise and mainly reflect the title.
 
 Requirements:
-- Do not add, infer, or assume any new information.
+- Do not add any new information.
 - Do not include explanations, comments, or extra text.
+- Always start the summary with 'The section details'
+
 
 Return ONLY valid JSON in the following format:
-{{"query": "<generated query>"}}
+{{"summary": "<generated summary>"}}
 
-CHUNK:
+TITLE:
+{title}
+
+TEXT CHUNK:
 {section}
 
 
-GENERATED QUERY:
+GENERATED SUMMARY:
 """
 
 

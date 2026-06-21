@@ -18,6 +18,7 @@ def get_model():
         base_url=settings.ollama_base_url,
         num_ctx=settings.ollama_num_ctx,
         temperature=0,
+        seed=settings.ollama_seed,
     )
 
 

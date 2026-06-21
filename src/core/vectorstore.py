@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from functools import lru_cache
+import streamlit as st
 
 from core.config import settings
 
@@ -8,8 +8,15 @@ DENSE = "dense"
 SPARSE = "sparse"
 
 
-@lru_cache(maxsize=1)
+@st.cache_resource
 def get_client():
+    """Return a process-wide singleton Qdrant client.
+
+    Local (file-based) Qdrant allows only one client per storage folder.
+    ``st.cache_resource`` shares this single instance across every page,
+    session, and rerun, preventing the "already accessed by another
+    instance" lock error in the multipage app.
+    """
     from qdrant_client import QdrantClient
 
     return QdrantClient(path=str(settings.qdrant_path))

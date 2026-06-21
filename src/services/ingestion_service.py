@@ -9,10 +9,10 @@ from pathlib import Path
 from core.config import settings
 from core.embeddings import embed_dense, embed_sparse
 from core.llm import generate_structured
-from core.prompts import QUERY_GEN_PROMPT
+from core.prompts import DOC2QUERY_PROMPT
 from core.text_utils import extract_titles, truncate_tokens
 from core.vectorstore import ensure_collection, get_client, source_indexed
-from models.schemas import Query
+from models.schemas import Summary
 
 
 def convert_pdf(pdf_path: str | Path) -> tuple[str, Path, bool]:
@@ -47,12 +47,11 @@ def split_chunks(raw_file: str) -> list[str]:
 
 
 def generate_query(section: str) -> str:
-    headlines: list[str] = extract_titles(section)
     section = truncate_tokens(section.strip(), settings.max_tokens)
-    prompt = QUERY_GEN_PROMPT.format(section=section)
-    response = generate_structured(prompt, Query)
-    query = response.query
-    return " ".join(headlines) + "\n" + query.strip()
+    title = " ".join(extract_titles(section)).strip()
+    prompt = DOC2QUERY_PROMPT.format(title=title, section=section)
+    response = generate_structured(prompt, Summary)
+    return response.summary.strip()
 
 
 def _queries_path(source: str) -> Path:
@@ -75,7 +74,12 @@ def build_documents(chunks: list[str], queries: list[str], source: str) -> list[
     limit = settings.max_tokens
     for i, (chunk, query) in enumerate(zip(chunks, queries, strict=False)):
         meta = {"chunk_index": i, "source": source, "original": chunk}
+        title = " ".join(extract_titles(chunk)).strip()
         docs.append({**meta, "kind": "chunk", "text": truncate_tokens(chunk, limit)})
+        if title:
+            docs.append(
+                {**meta, "kind": "title", "text": truncate_tokens(title, limit)}
+            )
         if query:
             docs.append(
                 {**meta, "kind": "query", "text": truncate_tokens(query, limit)}

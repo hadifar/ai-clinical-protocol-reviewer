@@ -20,15 +20,14 @@ class Settings(BaseSettings):
     max_tokens: int = 6000
     sparse_model: str = "Qdrant/bm25"
 
-    llm_provider: str = "ollama"  # "ollama" or "openai"
-
     ollama_model: str = "gemma4"
     ollama_base_url: str = "http://localhost:11434"
     ollama_num_ctx: int = 8192
+    ollama_seed: int = 42
 
     qdrant_collection: str = "clinical_chunks"
 
-    apply_reranking: bool = True
+    apply_reranking: bool = False
     apply_query_expansion: bool = True
 
     agent_search_k: int = 5
