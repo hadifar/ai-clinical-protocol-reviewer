@@ -6,7 +6,7 @@ import streamlit as st
 
 from core.config import settings
 from core.vectorstore import source_indexed
-from services import ingestion
+from services import ingestion_service
 
 
 def render() -> None:
@@ -21,7 +21,7 @@ def render() -> None:
 
     with st.status("Running pipeline...", expanded=True) as status:
         t0 = time.time()
-        raw_md, md_path, cached = ingestion.convert_pdf(pdf_path)
+        raw_md, md_path, cached = ingestion_service.convert_pdf(pdf_path)
         if cached:
             st.write(f"Loaded existing Markdown from `{md_path}` (skipped docling)")
         else:
@@ -30,10 +30,10 @@ def render() -> None:
                 f"({time.time() - t0:.1f}s)"
             )
 
-        chunks = ingestion.split_chunks(raw_md)
+        chunks = ingestion_service.split_chunks(raw_md)
         st.write(f"Split into {len(chunks)} section chunks")
 
-        queries = ingestion.load_queries(uploaded.name)
+        queries = ingestion_service.load_queries(uploaded.name)
         if queries is not None and len(queries) == len(chunks):
             st.write(f"Loaded {len(queries)} cached queries (skipped Ollama)")
         else:
@@ -42,14 +42,14 @@ def render() -> None:
             progress = st.progress(0.0)
 
             for i, chunk in enumerate(chunks):
-                queries.append(ingestion.generate_query(chunk))
+                queries.append(ingestion_service.generate_query(chunk))
                 progress.progress((i + 1) / len(chunks))
 
-            ingestion.save_queries(uploaded.name, queries)
+            ingestion_service.save_queries(uploaded.name, queries)
 
-        docs = ingestion.build_documents(chunks, queries, source=uploaded.name)
+        docs = ingestion_service.build_documents(chunks, queries, source=uploaded.name)
         if source_indexed(uploaded.name):
-            n, _ = ingestion.index_documents(docs, source=uploaded.name)
+            n, _ = ingestion_service.index_documents(docs, source=uploaded.name)
             st.write(
                 f"Loaded existing index for `{uploaded.name}` "
                 f"({n} vectors, skipped embedding)"
@@ -57,7 +57,7 @@ def render() -> None:
         else:
             st.write("Embedding & indexing chunks + queries in Qdrant...")
             index_progress = st.progress(0.0)
-            n, _ = ingestion.index_documents(
+            n, _ = ingestion_service.index_documents(
                 docs,
                 source=uploaded.name,
                 progress_callback=index_progress.progress,
@@ -69,5 +69,5 @@ def render() -> None:
 
     with st.expander("Preview chunks & generated queries"):
         for i, (c, q) in enumerate(zip(chunks, queries, strict=False)):
-            st.markdown(f"**Chunk {i}** — query: _{q}_")
+            st.markdown(f"**Chunk {i}** — doc2query: _{q}_")
             st.code(c[:1000] + ("..." if len(c) > 500 else ""))

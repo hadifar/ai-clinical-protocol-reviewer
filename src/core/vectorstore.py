@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from functools import lru_cache
+import streamlit as st
 
 from core.config import settings
 
@@ -8,8 +8,15 @@ DENSE = "dense"
 SPARSE = "sparse"
 
 
-@lru_cache(maxsize=1)
+@st.cache_resource
 def get_client():
+    """Return a process-wide singleton Qdrant client.
+
+    Local (file-based) Qdrant allows only one client per storage folder.
+    ``st.cache_resource`` shares this single instance across every page,
+    session, and rerun, preventing the "already accessed by another
+    instance" lock error in the multipage app.
+    """
     from qdrant_client import QdrantClient
 
     return QdrantClient(path=str(settings.qdrant_path))
@@ -44,6 +51,34 @@ def index_exists() -> bool:
         )
     except Exception:
         return False
+
+
+def get_chunk(chunk_index: int, source: str | None = None) -> str | None:
+    from qdrant_client.models import Condition, FieldCondition, Filter, MatchValue
+
+    client = get_client()
+    if not client.collection_exists(settings.qdrant_collection):
+        return None
+    must: list[Condition] = [
+        FieldCondition(key="chunk_index", match=MatchValue(value=chunk_index)),
+        FieldCondition(key="kind", match=MatchValue(value="chunk")),
+    ]
+    if source:
+        must.append(FieldCondition(key="source", match=MatchValue(value=source)))
+    points, _ = client.scroll(
+        settings.qdrant_collection,
+        scroll_filter=Filter(must=must),
+        limit=1,
+        with_payload=True,
+    )
+    if not points:
+        return None
+    payload = points[0].payload
+
+    if payload:
+        return payload.get("section", payload.get("text"))
+    else:
+        return None
 
 
 def source_indexed(source: str) -> int:

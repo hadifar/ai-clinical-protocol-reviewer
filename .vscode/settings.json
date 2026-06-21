@@ -39,7 +39,7 @@
   //  PYLANCE / TYPE CHECKING — IntelliSense + static analysis
   // ════════════════════════════════════════════════════════════
   "python.languageServer": "Pylance",
-  "python.analysis.typeCheckingMode": "standard", // "basic" → "standard" → "strict"
+  "python.analysis.typeCheckingMode": "basic", // "basic" → "standard" → "strict"
   "python.analysis.autoImportCompletions": true,
   "python.analysis.inlayHints.functionReturnTypes": true,
   "python.analysis.inlayHints.variableTypes": true,

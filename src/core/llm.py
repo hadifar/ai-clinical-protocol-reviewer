@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from functools import lru_cache
+from typing import cast
 
 from pydantic import BaseModel
 
@@ -8,17 +9,19 @@ from core.config import settings
 
 
 @lru_cache(maxsize=1)
-def get_ollama():
-    import ollama
+def get_model():
 
-    return ollama.Client(host=settings.ollama_base_url)
+    from langchain_ollama import ChatOllama
+
+    return ChatOllama(
+        model=settings.ollama_model,
+        base_url=settings.ollama_base_url,
+        num_ctx=settings.ollama_num_ctx,
+        temperature=0,
+        seed=settings.ollama_seed,
+    )
 
 
 def generate_structured[T: BaseModel](prompt: str, schema: type[T]) -> T:
-    resp = get_ollama().generate(
-        model=settings.ollama_model,
-        prompt=prompt,
-        options={"num_ctx": settings.ollama_num_ctx},
-        format=schema.model_json_schema(),
-    )
-    return schema.model_validate_json(resp.response)
+    result = get_model().with_structured_output(schema).invoke(prompt)
+    return cast(T, result)
