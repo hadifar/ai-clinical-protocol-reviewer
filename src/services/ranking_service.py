@@ -6,7 +6,7 @@ from core.llm import generate_structured
 from core.prompts import RERANK_PROMPT
 from core.text_utils import truncate_tokens
 from core.vectorstore import DENSE, SPARSE, get_client
-from models.schemas import Relevance
+from models.ai_types import RelevanceScoreResponse
 
 
 def expand_query(query: str) -> list[str]:
@@ -18,7 +18,7 @@ def expand_query(query: str) -> list[str]:
 def rerank_score(query: str, text: str) -> int:
     section = truncate_tokens(text.strip(), settings.max_tokens)
     prompt = RERANK_PROMPT.format(query=query.strip(), section=section)
-    response = generate_structured(prompt, Relevance)
+    response = generate_structured(prompt, RelevanceScoreResponse)
     return response.relevance
 
 

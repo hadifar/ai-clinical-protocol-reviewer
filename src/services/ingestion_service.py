@@ -12,7 +12,7 @@ from core.llm import generate_structured
 from core.prompts import DOC2QUERY_PROMPT
 from core.text_utils import extract_titles, truncate_tokens
 from core.vectorstore import ensure_collection, get_client, source_indexed
-from models.schemas import Summary
+from models.ai_types import GeneratedSummaryResponse
 
 
 def convert_pdf(pdf_path: str | Path) -> tuple[str, Path, bool]:
@@ -50,7 +50,7 @@ def generate_query(section: str) -> str:
     section = truncate_tokens(section.strip(), settings.max_tokens)
     title = " ".join(extract_titles(section)).strip()
     prompt = DOC2QUERY_PROMPT.format(title=title, section=section)
-    response = generate_structured(prompt, Summary)
+    response = generate_structured(prompt, GeneratedSummaryResponse)
     return response.summary.strip()
 
 
@@ -105,6 +105,40 @@ def build_documents(chunks: list[str], queries: list[str], source: str) -> list[
                 }
             )
     return docs
+
+
+def ingest_pdf(pdf_path: str | Path, source: str | None = None) -> dict:
+    """Run the full ingestion pipeline headlessly (no UI).
+
+    Mirrors the steps in ``ui/ingest_view.py`` so the Streamlit app and the
+    HTTP API share one implementation. Returns a summary of what happened,
+    reusing the same caching as the UI (Markdown, doc2query, index).
+    """
+    source = source or Path(pdf_path).name
+
+    raw_md, md_path, md_cached = convert_pdf(pdf_path)
+    chunks = split_chunks(raw_md)
+
+    cached_queries = load_queries(source)
+    queries_cached = cached_queries is not None and len(cached_queries) == len(chunks)
+    if queries_cached and cached_queries is not None:
+        queries = cached_queries
+    else:
+        queries = [generate_query(chunk) for chunk in chunks]
+        save_queries(source, queries)
+
+    docs = build_documents(chunks, queries, source=source)
+    n_vectors, already_indexed = index_documents(docs, source=source)
+
+    return {
+        "source": source,
+        "markdown_path": str(md_path),
+        "markdown_cached": md_cached,
+        "n_chunks": len(chunks),
+        "queries_cached": queries_cached,
+        "n_vectors": n_vectors,
+        "already_indexed": already_indexed,
+    }
 
 
 def index_documents(

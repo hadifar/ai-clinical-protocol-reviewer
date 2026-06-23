@@ -9,7 +9,7 @@ from core.constants import TARGET_ATTRIBUTES
 from core.llm import get_model
 from core.prompts import build_ie_prompt
 from core.vectorstore import get_chunk
-from models.schemas import IEAgentResponse
+from models.ai_types import IEAgentResponse
 
 _PREVIEW_N_WORDS = 250
 
