@@ -9,7 +9,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from core.config import settings
 from core.constants import TARGET_ATTRIBUTES
 from core.vectorstore import index_exists, vector_count
-from models.schemas import (
+from schemas.api_types import (
     ExtractRequest,
     ExtractResponse,
     IndexStatus,

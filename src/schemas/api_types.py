@@ -12,6 +12,9 @@ class IndexStatus(BaseModel):
 
 
 class IngestResponse(BaseModel):
+    # ingest_pdf() also returns chunks/queries for the UI preview; drop them here.
+    model_config = ConfigDict(extra="ignore")
+
     source: str
     markdown_path: str
     markdown_cached: bool

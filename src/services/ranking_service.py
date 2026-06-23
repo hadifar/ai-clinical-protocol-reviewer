@@ -6,7 +6,7 @@ from core.llm import generate_structured
 from core.prompts import RERANK_PROMPT
 from core.text_utils import truncate_tokens
 from core.vectorstore import DENSE, SPARSE, get_client
-from models.ai_types import RelevanceScoreResponse
+from schemas.ai_types import RelevanceScoreResponse
 
 
 def expand_query(query: str) -> list[str]:

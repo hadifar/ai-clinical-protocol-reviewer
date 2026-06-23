@@ -2,7 +2,7 @@
 
 AI-driven tooling to improve clinical trial data quality and review.
 
-A Streamlit app that ingests clinical trial protocol documents, makes them
+A web app (NiceGUI) that ingests clinical trial protocol documents, makes them
 searchable, and runs an LLM agent to extract structured information from them.
 
 ## Pipelines
@@ -15,7 +15,7 @@ searchable, and runs an LLM agent to extract structured information from them.
 
 ## Stack
 
-Python 3.12 · Streamlit · LangChain / LangGraph · Ollama · Qdrant · FastEmbed · Docling
+Python 3.12 · NiceGUI · FastAPI · LangChain / LangGraph · Ollama · Qdrant · FastEmbed · Docling
 
 ## Prerequisites
 
@@ -28,8 +28,12 @@ Python 3.12 · Streamlit · LangChain / LangGraph · Ollama · Qdrant · FastEmb
 uv sync                      # install dependencies
 ollama serve                 # start the local LLM backend
 ollama pull qwen2.5          # pull a tool-calling capable model (see note below)
-uv run streamlit run src/app.py
+uv run python -m uvicorn app:app --app-dir src
 ```
+
+This serves the UI on `http://localhost:8000` (`/` ingestion, `/search`,
+`/agent`). The HTTP API is served by the same process — see `/docs` for the
+interactive reference.
 
 The IE agent relies on tool calling + structured output, so the configured
 model must support both. `qwen2.5` is a good default; adjust `OLLAMA_MODEL` if

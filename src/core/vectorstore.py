@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-import streamlit as st
+from functools import lru_cache
 
 from core.config import settings
 
@@ -8,14 +8,14 @@ DENSE = "dense"
 SPARSE = "sparse"
 
 
-@st.cache_resource
+@lru_cache(maxsize=1)
 def get_client():
     """Return a process-wide singleton Qdrant client.
 
-    Local (file-based) Qdrant allows only one client per storage folder.
-    ``st.cache_resource`` shares this single instance across every page,
-    session, and rerun, preventing the "already accessed by another
-    instance" lock error in the multipage app.
+    Local (file-based) Qdrant allows only one client per storage folder, so
+    every caller must share one instance to avoid the "already accessed by
+    another instance" lock error. ``lru_cache`` keeps a single client for the
+    lifetime of the process (one Uvicorn worker serves the whole app).
     """
     from qdrant_client import QdrantClient
 
