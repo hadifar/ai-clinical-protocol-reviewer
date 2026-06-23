@@ -2,8 +2,8 @@ from __future__ import annotations
 
 from nicegui import run, ui
 
-from core.config import settings
-from core.vectorstore import vector_count
+from adapters.qdrant import vector_count
+from config import settings
 from services.ranking_service import search
 from ui.components.guards import requires_index, safe
 from ui.components.result_card import result_card

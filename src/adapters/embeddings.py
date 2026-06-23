@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from functools import lru_cache
 
-from core.config import settings
+from config import settings
 
 
 @lru_cache(maxsize=1)

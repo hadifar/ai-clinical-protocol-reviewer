@@ -6,13 +6,13 @@ import uuid
 from collections.abc import Callable
 from pathlib import Path
 
-from core.config import settings
-from core.embeddings import embed_dense, embed_sparse
-from core.llm import generate_structured
-from core.prompts import DOC2QUERY_PROMPT
-from core.text_utils import extract_titles, truncate_tokens
-from core.vectorstore import ensure_collection, get_client, source_indexed
+from adapters.embeddings import embed_dense, embed_sparse
+from adapters.llm import generate_structured
+from adapters.qdrant import ensure_collection, get_client, source_indexed
+from config import settings
 from schemas.ai_types import GeneratedSummaryResponse
+from services.prompts import DOC2QUERY_PROMPT
+from services.text_utils import extract_titles, truncate_tokens
 
 
 def convert_pdf(pdf_path: str | Path) -> tuple[str, Path, bool]:
@@ -177,7 +177,7 @@ def index_documents(
 ) -> tuple[int, bool]:
     from qdrant_client.models import PointStruct
 
-    from core.vectorstore import DENSE, SPARSE
+    from adapters.qdrant import DENSE, SPARSE
 
     if not docs:
         if progress_callback:

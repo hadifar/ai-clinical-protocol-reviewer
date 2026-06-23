@@ -4,12 +4,11 @@ from typing import Any
 
 from langchain.agents.structured_output import ProviderStrategy
 
-from core.config import settings
-from core.constants import TARGET_ATTRIBUTES
-from core.llm import get_model
-from core.prompts import build_ie_prompt
-from core.vectorstore import get_chunk
+from adapters.llm import get_model
+from adapters.qdrant import get_chunk
+from config import settings
 from schemas.ai_types import IEAgentResponse
+from services.prompts import TARGET_ATTRIBUTES, build_ie_prompt
 
 _PREVIEW_N_WORDS = 250
 

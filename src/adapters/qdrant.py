@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from functools import lru_cache
 
-from core.config import settings
+from config import settings
 
 DENSE = "dense"
 SPARSE = "sparse"
@@ -74,11 +74,7 @@ def get_chunk(chunk_index: int, source: str | None = None) -> str | None:
     if not points:
         return None
     payload = points[0].payload
-
-    if payload:
-        return payload.get("section", payload.get("text"))
-    else:
-        return None
+    return payload.get("section", payload.get("text")) if payload else None
 
 
 def source_indexed(source: str) -> int:

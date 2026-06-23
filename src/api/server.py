@@ -6,9 +6,8 @@ from typing import Annotated
 from fastapi import FastAPI, File, HTTPException, UploadFile
 from fastapi.middleware.cors import CORSMiddleware
 
-from core.config import settings
-from core.constants import TARGET_ATTRIBUTES
-from core.vectorstore import index_exists, vector_count
+from adapters.qdrant import index_exists, vector_count
+from config import settings
 from schemas.api_types import (
     ExtractRequest,
     ExtractResponse,
@@ -21,13 +20,14 @@ from schemas.api_types import (
 )
 from services import ingestion_service
 from services.agent_service import invoke_agent
+from services.prompts import TARGET_ATTRIBUTES
 from services.ranking_service import search
 
 app = FastAPI(
     title="AI Clinical Protocol Reviewer API",
     description=(
         "HTTP API over the same ingestion / search / extraction services that "
-        "power the Streamlit app. Lets other systems index protocols and pull "
+        "power the app. Lets other systems index protocols and pull "
         "structured information programmatically."
     ),
     version="1.0.0",

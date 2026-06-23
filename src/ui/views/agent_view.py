@@ -4,8 +4,8 @@ import json
 
 from nicegui import run, ui
 
-from core.constants import TARGET_ATTRIBUTES
 from services.agent_service import invoke_agent
+from services.prompts import TARGET_ATTRIBUTES
 from ui.components.guards import requires_index, safe
 from ui.components.trace_view import trace_view
 

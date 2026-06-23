@@ -17,6 +17,23 @@ searchable, and runs an LLM agent to extract structured information from them.
 
 Python 3.12 · NiceGUI · FastAPI · LangChain / LangGraph · Ollama · Qdrant · FastEmbed · Docling
 
+## Project layout
+
+```
+src/
+  app.py        # entrypoint — mounts the NiceGUI UI onto the FastAPI app
+  config.py     # app-wide settings (pydantic-settings, overridable via .env)
+  adapters/     # thin clients for external services: Qdrant, FastEmbed, Ollama
+  services/     # pipeline logic: ingestion, ranking/search, IE agent
+                #   (+ prompts.py and text_utils.py, used only by these)
+  schemas/      # pydantic data contracts (LLM I/O and HTTP request/response)
+  api/          # FastAPI HTTP layer
+  ui/           # NiceGUI pages, layout, and components
+```
+
+Dependency flow is one-way: `ui` / `api` → `services` → `adapters`, with
+`config` and `schemas` shared across layers.
+
 ## Prerequisites
 
 - Python 3.12+ and [uv](https://docs.astral.sh/uv/)
@@ -41,13 +58,13 @@ you prefer another tool-capable model.
 
 ## Configuration
 
-Defaults live in [src/core/config.py](src/core/config.py) and can be overridden
+Defaults live in [src/config.py](src/config.py) and can be overridden
 via a `.env` file. Copy [.env.example](.env.example) to `.env` and edit as needed.
 
 ## Disclaimer
 
 This is a research/engineering prototype for exploring AI-assisted protocol
-review. It is **not** a validated medical device and must **not** be used for
+review. It is **not** a validated medical software and must **not** be used for
 clinical, diagnostic, or regulatory decisions. Always verify extracted
 information against the source document.
 

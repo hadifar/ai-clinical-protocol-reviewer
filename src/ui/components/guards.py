@@ -5,7 +5,7 @@ from collections.abc import Awaitable, Callable
 
 from nicegui import ui
 
-from core.vectorstore import index_exists
+from adapters.qdrant import index_exists
 
 NO_INDEX_MESSAGE = "No index found yet. Ingest a PDF first."
 

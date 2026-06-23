@@ -4,7 +4,7 @@ from pathlib import Path
 
 from nicegui import run, ui
 
-from core.config import settings
+from config import settings
 from services import ingestion_service
 from ui.components.guards import safe
 

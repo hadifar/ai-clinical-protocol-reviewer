@@ -1,12 +1,12 @@
 from __future__ import annotations
 
-from core.config import settings
-from core.embeddings import embed_dense, embed_sparse
-from core.llm import generate_structured
-from core.prompts import RERANK_PROMPT
-from core.text_utils import truncate_tokens
-from core.vectorstore import DENSE, SPARSE, get_client
+from adapters.embeddings import embed_dense, embed_sparse
+from adapters.llm import generate_structured
+from adapters.qdrant import DENSE, SPARSE, get_client
+from config import settings
 from schemas.ai_types import RelevanceScoreResponse
+from services.prompts import RERANK_PROMPT
+from services.text_utils import truncate_tokens
 
 
 def expand_query(query: str) -> list[str]:
