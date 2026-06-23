@@ -4,6 +4,8 @@ version = "1.0.0"
 description = "AI-driven tooling to improve clinical trial data quality and review."
 readme = "README.md"
 requires-python = ">=3.12"
+license = "MIT"
+license-files = ["LICENSE"]
 
 dependencies = [
     "docling>=2.102.1",

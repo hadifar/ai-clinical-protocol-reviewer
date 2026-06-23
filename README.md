@@ -17,16 +17,35 @@ searchable, and runs an LLM agent to extract structured information from them.
 
 Python 3.12 · Streamlit · LangChain / LangGraph · Ollama · Qdrant · FastEmbed · Docling
 
+## Prerequisites
+
+- Python 3.12+ and [uv](https://docs.astral.sh/uv/)
+- [Ollama](https://ollama.com/) for the local LLM backend
+
 ## Setup
 
 ```bash
 uv sync                      # install dependencies
-ollama serve                 # local LLM backend
+ollama serve                 # start the local LLM backend
+ollama pull qwen2.5          # pull a tool-calling capable model (see note below)
 uv run streamlit run src/app.py
 ```
 
-Configuration (models, Ollama URL, collection name, etc.) lives in
-[src/core/config.py](src/core/config.py) and can be overridden via a `.env` file.
+The IE agent relies on tool calling + structured output, so the configured
+model must support both. `qwen2.5` is a good default; adjust `OLLAMA_MODEL` if
+you prefer another tool-capable model.
+
+## Configuration
+
+Defaults live in [src/core/config.py](src/core/config.py) and can be overridden
+via a `.env` file. Copy [.env.example](.env.example) to `.env` and edit as needed.
+
+## Disclaimer
+
+This is a research/engineering prototype for exploring AI-assisted protocol
+review. It is **not** a validated medical device and must **not** be used for
+clinical, diagnostic, or regulatory decisions. Always verify extracted
+information against the source document.
 
 
 ## Slide
