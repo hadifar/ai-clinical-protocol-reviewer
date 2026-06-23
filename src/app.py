@@ -11,7 +11,7 @@ def _build_page(page) -> None:
     page.render()
 
 
-# Register one NiceGUI route per page in the registry
+# Register one NiceGUI route per page
 for _page in layout.PAGES:
     ui.page(_page.path)(lambda page=_page: _build_page(page))
 
