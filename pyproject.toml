@@ -1,5 +1,5 @@
 [project]
-name = "cluepoint"
+name = "ai-clinical-protocol-reviewer"
 version = "1.0.0"
 description = "AI-driven tooling to improve clinical trial data quality and review."
 readme = "README.md"

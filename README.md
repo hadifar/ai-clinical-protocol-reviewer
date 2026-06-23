@@ -1,4 +1,4 @@
-# Cluepoints Challenge
+# AI Clinical Protocol Reviewer
 
 AI-driven tooling to improve clinical trial data quality and review.
 
