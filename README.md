@@ -61,6 +61,13 @@ you prefer another tool-capable model.
 Defaults live in [src/config.py](src/config.py) and can be overridden
 via a `.env` file. Copy [.env.example](.env.example) to `.env` and edit as needed.
 
+## Contributing
+
+Branching, commit conventions, and the release flow are documented in
+[CONTRIBUTING.md](CONTRIBUTING.md). In short: branch off `main`, use
+[Conventional Commits](https://www.conventionalcommits.org/) (they drive
+automatic versioning), and squash-merge PRs with a conventional title.
+
 ## Disclaimer
 
 This is a research/engineering prototype for exploring AI-assisted protocol
