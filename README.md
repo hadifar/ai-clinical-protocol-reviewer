@@ -2,7 +2,7 @@
 
 AI-driven tooling to improve clinical trial data quality and review.
 
-A web app (NiceGUI) that ingests clinical trial protocol documents, makes them
+A web app that ingests clinical trial protocol documents, makes them
 searchable, and runs an LLM agent to extract structured information from them.
 
 ## Pipelines
@@ -52,14 +52,10 @@ This serves the UI on `http://localhost:8000` (`/` ingestion, `/search`,
 `/agent`). The HTTP API is served by the same process — see `/docs` for the
 interactive reference.
 
-The IE agent relies on tool calling + structured output, so the configured
-model must support both. `qwen2.5` is a good default; adjust `OLLAMA_MODEL` if
-you prefer another tool-capable model.
-
 ## Configuration
 
 Defaults live in [src/config.py](src/config.py) and can be overridden
-via a `.env` file. Copy [.env.example](.env.example) to `.env` and edit as needed.
+via a `.env` file.
 
 ## Contributing
 
@@ -74,10 +70,6 @@ This is a research/engineering prototype for exploring AI-assisted protocol
 review. It is **not** a validated medical software and must **not** be used for
 clinical, diagnostic, or regulatory decisions. Always verify extracted
 information against the source document.
-
-
-## Slide
-Slide can be seen [here](https://docs.google.com/presentation/d/1nQb8Hczir33vj2YkuShekdg5CpwsSy-QnWbW3bUMzco/edit?usp=sharing)!
 
 
 ## Contact
