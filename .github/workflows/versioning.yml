@@ -17,8 +17,6 @@ jobs:
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
-          # Admin PAT so the bump push bypasses the main ruleset.
-          # GITHUB_TOKEN can't be a ruleset bypass actor; an admin can.
           token: ${{ secrets.RELEASE_TOKEN }}
 
 
