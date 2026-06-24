@@ -135,6 +135,7 @@ def ingest_pdf(
     status(f"Split into {len(chunks)} section chunks")
 
     cached_queries = load_queries(source)
+
     queries_cached = cached_queries is not None and len(cached_queries) == len(chunks)
     if queries_cached and cached_queries is not None:
         queries = cached_queries

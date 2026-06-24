@@ -20,16 +20,30 @@ def render() -> None:
     progress.visible = False
     preview = ui.column().classes("w-full")
 
+    # Holds the most recently uploaded PDF until the user starts ingestion.
+    uploaded: dict = {"path": None, "name": None}
+
     @safe
     async def handle_upload(e) -> None:
+        name = Path(e.file.name).name
+        pdf_path = settings.upload_dir / name
+        pdf_path.write_bytes(await e.file.read())
+        uploaded.update(path=pdf_path, name=name)
+        start_button.enable()
+        ui.notify(f"{name} ready — click Start ingestion")
+
+    @safe
+    async def handle_ingest() -> None:
+        if uploaded["path"] is None:
+            ui.notify("Upload a PDF first", type="warning")
+            return
+
+        pdf_path, name = uploaded["path"], uploaded["name"]
+        start_button.disable()
         log.clear()
         preview.clear()
         progress.visible = True
         progress.value = 0.0
-
-        name = Path(e.name).name
-        pdf_path = settings.upload_dir / name
-        pdf_path.write_bytes(e.content.read())
 
         # The pipeline runs in a worker thread, so its callbacks push updates
         # into shared state; a ui.timer syncs that state onto the widgets.
@@ -57,6 +71,7 @@ def render() -> None:
         finally:
             timer.cancel()
             sync()
+            start_button.enable()
 
         progress.value = 1.0
         with log:
@@ -81,3 +96,8 @@ def render() -> None:
         on_upload=handle_upload,
         max_files=1,
     ).props("accept=.pdf").classes("w-full max-w-md")
+
+    start_button = ui.button("Start PDF ingestion", on_click=handle_ingest).classes(
+        "q-mt-md"
+    )
+    start_button.disable()

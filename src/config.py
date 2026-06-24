@@ -5,7 +5,7 @@ from pathlib import Path
 from pydantic import computed_field
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
-ROOT = Path(__file__).resolve().parents[2]
+ROOT = Path(__file__).resolve().parents[1]
 
 
 class Settings(BaseSettings):
@@ -20,9 +20,7 @@ class Settings(BaseSettings):
     max_tokens: int = 6000
     sparse_model: str = "Qdrant/bm25"
 
-    # Must support tool calling + structured output for the IE agent.
-    # Pull it first, e.g. `ollama pull qwen2.5`.
-    ollama_model: str = "qwen2.5"
+    ollama_model: str = "gemma4"
     ollama_base_url: str = "http://localhost:11434"
     ollama_num_ctx: int = 8192
     ollama_seed: int = 42

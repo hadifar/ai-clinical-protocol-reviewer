@@ -10,13 +10,7 @@ SPARSE = "sparse"
 
 @lru_cache(maxsize=1)
 def get_client():
-    """Return a process-wide singleton Qdrant client.
-
-    Local (file-based) Qdrant allows only one client per storage folder, so
-    every caller must share one instance to avoid the "already accessed by
-    another instance" lock error. ``lru_cache`` keeps a single client for the
-    lifetime of the process (one Uvicorn worker serves the whole app).
-    """
+    """Return a process-wide singleton Qdrant client."""
     from qdrant_client import QdrantClient
 
     return QdrantClient(path=str(settings.qdrant_path))

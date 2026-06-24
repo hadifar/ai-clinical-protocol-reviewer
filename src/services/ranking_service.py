@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from qdrant_client.models import FusionQuery
+
 from adapters.embeddings import embed_dense, embed_sparse
 from adapters.llm import generate_structured
 from adapters.qdrant import DENSE, SPARSE, get_client
@@ -37,7 +39,7 @@ def rerank(query: str, results: list[dict], top_n: int | None = None) -> list[di
 
 
 def search(query: str, k: int = 12, top_n=5) -> list[dict]:
-    from qdrant_client.models import Fusion, FusionQuery, Prefetch
+    from qdrant_client.models import Fusion, Prefetch
 
     queries = expand_query(query)
     dense = embed_dense(queries)
@@ -46,6 +48,7 @@ def search(query: str, k: int = 12, top_n=5) -> list[dict]:
     for d, s in zip(dense, sparse, strict=True):
         prefetch.append(Prefetch(query=d, using=DENSE, limit=k * 4))
         prefetch.append(Prefetch(query=s, using=SPARSE, limit=k * 4))
+
     response = get_client().query_points(
         settings.qdrant_collection,
         prefetch=prefetch,
