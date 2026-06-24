@@ -1,12 +1,14 @@
 from __future__ import annotations
 
-from core.config import settings
-from core.embeddings import embed_dense, embed_sparse
-from core.llm import generate_structured
-from core.prompts import RERANK_PROMPT
-from core.text_utils import truncate_tokens
-from core.vectorstore import DENSE, SPARSE, get_client
-from models.schemas import Relevance
+from qdrant_client.models import FusionQuery
+
+from adapters.embeddings import embed_dense, embed_sparse
+from adapters.llm import generate_structured
+from adapters.qdrant import DENSE, SPARSE, get_client
+from config import settings
+from schemas.ai_types import RelevanceScoreResponse
+from services.prompts import RERANK_PROMPT
+from services.text_utils import truncate_tokens
 
 
 def expand_query(query: str) -> list[str]:
@@ -18,7 +20,7 @@ def expand_query(query: str) -> list[str]:
 def rerank_score(query: str, text: str) -> int:
     section = truncate_tokens(text.strip(), settings.max_tokens)
     prompt = RERANK_PROMPT.format(query=query.strip(), section=section)
-    response = generate_structured(prompt, Relevance)
+    response = generate_structured(prompt, RelevanceScoreResponse)
     return response.relevance
 
 
@@ -37,7 +39,7 @@ def rerank(query: str, results: list[dict], top_n: int | None = None) -> list[di
 
 
 def search(query: str, k: int = 12, top_n=5) -> list[dict]:
-    from qdrant_client.models import Fusion, FusionQuery, Prefetch
+    from qdrant_client.models import Fusion, Prefetch
 
     queries = expand_query(query)
     dense = embed_dense(queries)
@@ -46,6 +48,7 @@ def search(query: str, k: int = 12, top_n=5) -> list[dict]:
     for d, s in zip(dense, sparse, strict=True):
         prefetch.append(Prefetch(query=d, using=DENSE, limit=k * 4))
         prefetch.append(Prefetch(query=s, using=SPARSE, limit=k * 4))
+
     response = get_client().query_points(
         settings.qdrant_collection,
         prefetch=prefetch,

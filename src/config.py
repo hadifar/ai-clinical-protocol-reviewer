@@ -5,7 +5,7 @@ from pathlib import Path
 from pydantic import computed_field
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
-ROOT = Path(__file__).resolve().parents[2]
+ROOT = Path(__file__).resolve().parents[1]
 
 
 class Settings(BaseSettings):
@@ -31,6 +31,7 @@ class Settings(BaseSettings):
     apply_query_expansion: bool = True
 
     agent_search_k: int = 5
+    agent_debug: bool = False
 
     data_dir: Path = ROOT / "data"
 

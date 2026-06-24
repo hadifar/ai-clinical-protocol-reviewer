@@ -1,3 +1,28 @@
+"""The extraction domain: what we pull out of clinical protocols, and the
+prompts that drive it.
+
+``TARGET_ATTRIBUTES`` and ``ATTRIBUTE_HINTS`` are kept together on purpose: the
+hint keys MUST match the attribute keys, so co-locating them keeps that
+invariant visible.
+"""
+
+from __future__ import annotations
+
+TARGET_ATTRIBUTES = {
+    "primary_study_objectives": "Primary study objectives",
+    "secondary_study_objective": "Secondary study objectives",
+    "primary_endpoints": "Primary endpoints",
+    "exploratory_endpoints": "Exploratory endpoints",
+    "schedule_of_activities_table": "Schedule of Activities (SoA) as a structured table",
+    "inclusion_criteria": "Inclusion Criteria",
+    "exclusion_criteria": "Exclusion Criteria",
+    "visit_definition": "Visit Definition",
+    "visit_timing": "Visit timing",
+    "Key_assessments_and_procedures": "Key assessments and procedures",
+    "safety_monitoring_rules": "Safety monitoring rules",
+}
+
+
 DOC2QUERY_PROMPT = """You are tasked with generating a single sentence summary.
 The summary MUST be concise and mainly reflect the title.
 
@@ -61,7 +86,7 @@ Strategy:
 
 # Per-attribute guidance appended to IE_PROMPT. Only attributes that benefit from
 # extra direction need an entry; the rest fall back to the generic strategy above.
-# Keys must match core.constants.TARGET_ATTRIBUTES.
+# Keys must match TARGET_ATTRIBUTES.
 ATTRIBUTE_HINTS = {
     "primary_study_objectives": "Usually stated in the synopsis or an 'Objectives and Endpoints' section. "
     "Return the primary objective(s) as concise prose, verbatim where possible.",

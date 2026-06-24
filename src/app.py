@@ -1,10 +1,23 @@
 from __future__ import annotations
 
-import streamlit as st
+from nicegui import ui
 
-from ui import sidebar_comp
+from api.server import app
+from ui import layout
 
-st.set_page_config(page_title="Clinical Trial Ingestion", layout="wide")
-st.title("Clinical Trial Document Analysis")
 
-sidebar_comp.render()
+def _build_page(page) -> None:
+    layout.page_frame(page.path)
+    page.render()
+
+
+# Register one NiceGUI route per page
+for _page in layout.PAGES:
+    ui.page(_page.path)(lambda page=_page: _build_page(page))
+
+# Mount the NiceGUI UI onto the existing FastAPI app, so a single Uvicorn
+ui.run_with(
+    app,
+    title="Clinical Trial Document Analysis",
+    storage_secret="ai-clinical-protocol-reviewer",
+)

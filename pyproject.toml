@@ -1,29 +1,45 @@
 [project]
-name = "cluepoint"
+name = "ai-clinical-protocol-reviewer"
 version = "1.0.0"
 description = "AI-driven tooling to improve clinical trial data quality and review."
 readme = "README.md"
 requires-python = ">=3.12"
+license = "MIT"
+license-files = ["LICENSE"]
 
 dependencies = [
     "docling>=2.102.1",
+    "fastapi>=0.138.0",
     "fastembed>=0.8.0",
     "langchain>=1.3.9",
     "langchain-ollama>=1.1.0",
     "langchain-openai>=1.3.2",
     "langgraph>=1.2.5",
+    "nicegui>=3.13.0",
+    "python-multipart>=0.0.32",
     "qdrant-client>=1.18.0",
-    "streamlit>=1.58.0",
+    "uvicorn[standard]>=0.49.0",
 ]
 
 [dependency-groups]
 dev = [
+    "commitizen>=4.16.4",
     "pre-commit>=4.6.0",
     "pyright>=1.1.410",
+    "pytest>=9.1.1",
     "ruff>=0.15.17",
 ]
 
 
+
+[tool.commitizen]
+name = "cz_conventional_commits"
+version = "1.0.0"
+version_provider = "pep621"
+version_files = ["pyproject.toml:version"]
+tag_format = "v$version"
+update_changelog_on_bump = true
+major_version_zero = false
 
 [tool.ruff]
 line-length = 88

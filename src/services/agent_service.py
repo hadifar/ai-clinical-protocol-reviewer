@@ -4,27 +4,13 @@ from typing import Any
 
 from langchain.agents.structured_output import ProviderStrategy
 
-from core.config import settings
-from core.constants import TARGET_ATTRIBUTES
-from core.llm import get_model
-from core.prompts import build_ie_prompt
-from core.vectorstore import get_chunk
-from models.schemas import IEAgentResponse
+from adapters.llm import get_model
+from adapters.qdrant import get_chunk
+from config import settings
+from schemas.ai_types import IEAgentResponse
+from services.prompts import TARGET_ATTRIBUTES, build_ie_prompt
 
 _PREVIEW_N_WORDS = 250
-
-
-# class GroundingGuardrailMiddleware(AgentMiddleware):
-#     def after_agent(self, state, runtime) -> dict | None:
-#         resp = state.get("structured_response")
-#         if resp is None:
-#             return None
-#         # Mock guardrail: drop citations that don't resolve to a real chunk,
-#         # and blank the answer if nothing is grounded.
-#         valid = [c for c in resp.cited_chunk_indices if get_chunk(c) is not None]
-#         if valid == resp.cited_chunk_indices:
-#             return None
-#         return state
 
 
 def _build_tools():
@@ -94,9 +80,8 @@ def invoke_agent(attribute_key: str) -> tuple[dict, list]:
                     tool_name="read_chunk",
                     thread_limit=6,
                 ),
-                # GroundingGuardrailMiddleware(),
             ],
-            debug=True,
+            debug=settings.agent_debug,
         )
         .with_retry(stop_after_attempt=3)
         .with_fallbacks([RunnableLambda(_exception_handler)])

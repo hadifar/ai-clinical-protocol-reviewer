@@ -1,4 +1,13 @@
+default_install_hook_types: [pre-commit, commit-msg]
+
 repos:
+  # Enforce Conventional Commits on the commit message
+  - repo: https://github.com/commitizen-tools/commitizen
+    rev: v4.16.4
+    hooks:
+      - id: commitizen
+        stages: [commit-msg]
+
   # General file checks
   - repo: https://github.com/pre-commit/pre-commit-hooks
     rev: v6.0.0

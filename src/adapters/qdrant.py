@@ -1,22 +1,16 @@
 from __future__ import annotations
 
-import streamlit as st
+from functools import lru_cache
 
-from core.config import settings
+from config import settings
 
 DENSE = "dense"
 SPARSE = "sparse"
 
 
-@st.cache_resource
+@lru_cache(maxsize=1)
 def get_client():
-    """Return a process-wide singleton Qdrant client.
-
-    Local (file-based) Qdrant allows only one client per storage folder.
-    ``st.cache_resource`` shares this single instance across every page,
-    session, and rerun, preventing the "already accessed by another
-    instance" lock error in the multipage app.
-    """
+    """Return a process-wide singleton Qdrant client."""
     from qdrant_client import QdrantClient
 
     return QdrantClient(path=str(settings.qdrant_path))
@@ -74,11 +68,7 @@ def get_chunk(chunk_index: int, source: str | None = None) -> str | None:
     if not points:
         return None
     payload = points[0].payload
-
-    if payload:
-        return payload.get("section", payload.get("text"))
-    else:
-        return None
+    return payload.get("section", payload.get("text")) if payload else None
 
 
 def source_indexed(source: str) -> int:

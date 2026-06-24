@@ -5,7 +5,7 @@ from typing import cast
 
 from pydantic import BaseModel
 
-from core.config import settings
+from config import settings
 
 
 @lru_cache(maxsize=1)
