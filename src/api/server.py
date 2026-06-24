@@ -30,7 +30,6 @@ app = FastAPI(
         "power the app. Lets other systems index protocols and pull "
         "structured information programmatically."
     ),
-    version="1.0.0",
 )
 
 # Local prototype: allow any origin so scripts / notebooks can call it freely.

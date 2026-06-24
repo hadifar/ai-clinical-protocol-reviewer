@@ -23,6 +23,7 @@ dependencies = [
 
 [dependency-groups]
 dev = [
+    "commitizen>=4.16.4",
     "pre-commit>=4.6.0",
     "pyright>=1.1.410",
     "pytest>=9.1.1",
@@ -30,6 +31,15 @@ dev = [
 ]
 
 
+
+[tool.commitizen]
+name = "cz_conventional_commits"
+version = "1.0.0"
+version_provider = "pep621"
+version_files = ["pyproject.toml:version"]
+tag_format = "v$version"
+update_changelog_on_bump = true
+major_version_zero = false
 
 [tool.ruff]
 line-length = 88
