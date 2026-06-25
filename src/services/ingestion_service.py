@@ -50,7 +50,7 @@ def generate_query(section: str) -> str:
     section = truncate_tokens(section.strip(), settings.max_tokens)
     title = " ".join(extract_titles(section)).strip()
     prompt = DOC2QUERY_PROMPT.format(title=title, section=section)
-    response = generate_structured(prompt, GeneratedSummaryResponse)
+    response = generate_structured(prompt, GeneratedSummaryResponse, name="doc2query")
     return response.summary.strip()
 
 

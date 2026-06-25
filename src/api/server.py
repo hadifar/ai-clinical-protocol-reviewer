@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from collections.abc import AsyncIterator
+from contextlib import asynccontextmanager
 from pathlib import Path
 from typing import Annotated
 
@@ -23,6 +25,16 @@ from services.agent_service import invoke_agent
 from services.prompts import TARGET_ATTRIBUTES
 from services.ranking_service import search
 
+
+@asynccontextmanager
+async def lifespan(app: FastAPI) -> AsyncIterator[None]:
+    yield
+    # Flush buffered Langfuse traces on shutdown so short-lived runs aren't lost.
+    from adapters.observability import flush
+
+    flush()
+
+
 app = FastAPI(
     title="AI Clinical Protocol Reviewer API",
     description=(
@@ -30,6 +42,7 @@ app = FastAPI(
         "power the app. Lets other systems index protocols and pull "
         "structured information programmatically."
     ),
+    lifespan=lifespan,
 )
 
 # Local prototype: allow any origin so scripts / notebooks can call it freely.

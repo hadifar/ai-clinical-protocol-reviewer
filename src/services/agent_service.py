@@ -87,8 +87,11 @@ def invoke_agent(attribute_key: str) -> tuple[dict, list]:
         .with_fallbacks([RunnableLambda(_exception_handler)])
     )
 
+    from adapters.observability import trace_config
+
     state = agent.invoke(
-        {"messages": [HumanMessage(content=f"attribute: {attribute}")]}
+        {"messages": [HumanMessage(content=f"attribute: {attribute}")]},
+        config=trace_config(f"ie-agent:{attribute_key}"),
     )
 
     # TODO: issue with low capability models

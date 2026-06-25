@@ -57,6 +57,18 @@ interactive reference.
 Defaults live in [src/config.py](src/config.py) and can be overridden
 via a `.env` file.
 
+### Tracing (optional)
+
+LLM calls (the extraction agent, doc2query, and reranking) can be traced with a
+self-hosted [Langfuse](https://langfuse.com). Tracing turns on only when both
+keys are set; otherwise it is a no-op. Add to `.env`:
+
+```dotenv
+LANGFUSE_PUBLIC_KEY=pk-lf-...
+LANGFUSE_SECRET_KEY=sk-lf-...
+LANGFUSE_HOST=http://localhost:3000   # default; your local Langfuse instance
+```
+
 ## Contributing
 
 Branching, commit conventions, and the release flow are documented in

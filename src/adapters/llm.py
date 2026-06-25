@@ -22,6 +22,14 @@ def get_model():
     )
 
 
-def generate_structured[T: BaseModel](prompt: str, schema: type[T]) -> T:
-    result = get_model().with_structured_output(schema).invoke(prompt)
+def generate_structured[T: BaseModel](
+    prompt: str, schema: type[T], *, name: str | None = None
+) -> T:
+    from adapters.observability import trace_config
+
+    result = (
+        get_model()
+        .with_structured_output(schema)
+        .invoke(prompt, config=trace_config(name))
+    )
     return cast(T, result)

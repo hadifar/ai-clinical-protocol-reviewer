@@ -20,7 +20,7 @@ def expand_query(query: str) -> list[str]:
 def rerank_score(query: str, text: str) -> int:
     section = truncate_tokens(text.strip(), settings.max_tokens)
     prompt = RERANK_PROMPT.format(query=query.strip(), section=section)
-    response = generate_structured(prompt, RelevanceScoreResponse)
+    response = generate_structured(prompt, RelevanceScoreResponse, name="rerank")
     return response.relevance
 
 

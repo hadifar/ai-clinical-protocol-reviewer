@@ -13,6 +13,7 @@ class Settings(BaseSettings):
         env_file=ROOT / ".env",
         env_file_encoding="utf-8",
         extra="ignore",
+        case_sensitive=False,
     )
 
     embed_model: str = "BAAI/bge-large-en-v1.5"
@@ -33,7 +34,18 @@ class Settings(BaseSettings):
     agent_search_k: int = 5
     agent_debug: bool = False
 
+    # Langfuse LLM observability — points at a self-hosted (local) Langfuse by
+    # default; tracing turns on only when both keys are set.
+    langfuse_public_key: str = ""
+    langfuse_secret_key: str = ""
+    langfuse_host: str = "http://localhost:3000"
+
     data_dir: Path = ROOT / "data"
+
+    @computed_field
+    @property
+    def langfuse_enabled(self) -> bool:
+        return bool(self.langfuse_public_key and self.langfuse_secret_key)
 
     @computed_field
     @property
